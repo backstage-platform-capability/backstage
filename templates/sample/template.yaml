@@ -1,0 +1,38 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: sample
+  title: Sample Service
+  description: Create a Sample service
+spec:
+  owner: guests
+  type: service
+
+  parameters:
+    - title: Service Information
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+        description:
+          title: Description
+          type: string
+
+  steps:
+    - id: fetch-base
+      name: Fetch Skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+
+    - id: register
+      name: Register in Catalog
+      action: catalog:register
+      input:
+        # repoContentsUrl: ${{ steps.fetch-base.output.repoContentsUrl }}
+        catalogInfoPath: catalog-info.yaml
