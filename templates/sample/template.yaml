@@ -2,10 +2,11 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: sample
-  title: Sample Service
-  description: Create a Sample service
+  annotations:
+    backstage.io/source-location: file:../../templates/sample
+
 spec:
-  owner: guests
+  owner: user:default/guest
   type: service
 
   parameters:
@@ -34,5 +35,5 @@ spec:
       name: Register in Catalog
       action: catalog:register
       input:
-        # repoContentsUrl: ${{ steps.fetch-base.output.repoContentsUrl }}
-        catalogInfoPath: catalog-info.yaml
+        repoContentsUrl: ${{ steps.fetch-base.output.repoContentsUrl }}
+        catalogInfoPath: skeleton/catalog-info.yaml
