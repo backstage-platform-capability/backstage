@@ -2,17 +2,36 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: sample
-  title: Sample Template
+  title: Sample Service Template
   description: Example scaffolder template
 spec:
-  owner: group:default/admins
+  owner: group:default/admins   # must exist in your catalog
   type: service
+
   parameters:
-    - title: Name
+    - title: Service Name
+      description: Unique name for the new service
       type: string
       required: true
+
   steps:
     - id: fetch
+      name: Fetch skeleton
       action: fetch:template
       input:
         url: ./skeleton
+        values:
+          name: ${{ parameters.serviceName }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=${{ parameters.serviceName }}
+        description: "Generated from sample template"
+
+    - id: register
+      name: Register in catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
