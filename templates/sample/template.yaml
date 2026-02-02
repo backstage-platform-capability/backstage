@@ -18,23 +18,7 @@ spec:
       name: Fetch skeleton
       action: fetch:template
       input:
-        url: https://github.com/sameerijoshi/backstage/tree/main/templates/sample/skeleton
+        url: https://github.com/sameerijoshi/backstage/archive/refs/heads/main.zip
+        targetPath: .
         values:
-<<<<<<< HEAD
           name: ${{ parameters.serviceName }}
-=======
-          name: ${{ parameters.serviceName }}
-
-    - id: publish
-      name: Publish to GitHub
-      action: publish:github
-      input:
-        repoUrl: github.com?owner=sameerijoshi&repo=${{ parameters.serviceName }}
-        description: "Generated from sample template"
-
-    - id: register
-      name: Register in catalog
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
->>>>>>> 1a7a4be95484d6c48cf94ae496a54df2a567535e
