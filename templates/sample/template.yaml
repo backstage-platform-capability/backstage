@@ -20,7 +20,7 @@ spec:
       name: Fetch skeleton
       action: fetch:template
       input:
-        url: https://github.com/sameerijoshi/backstage/blob/main/templates/sample/skeleton
+        url: https://github.com/sameerijoshi/backstage/tree/main/templates/sample/skeleton
         values:
           name: ${{ parameters.serviceName }}
 
