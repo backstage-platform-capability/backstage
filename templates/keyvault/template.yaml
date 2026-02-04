@@ -1,93 +1,80 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: azure-keyvault-template
-  title: Azure Key Vault Provisioning
-  description: Provision Azure Key Vaults with RBAC and role assignments
+  name: azure-key-vault
+  title: Azure Key Vault (RBAC)
+  description: Create an Azure Key Vault using Terraform
 spec:
   owner: platform-team
-  type: service
+  type: infrastructure
 
   parameters:
-    - title: Service Information
-      properties:
-        serviceName:
-          type: string
-          description: Name of the service
-          default: azure-keyvault-service
-
     - title: Key Vault Configuration
+      required:
+        - key_vault_name
+        - resource_group_name
       properties:
         key_vault_name:
+          title: Key Vault Name
           type: string
-          description: Name of the Key Vault
-          default: iac-poc-kv-001
+          description: Name of the Azure Key Vault
         resource_group_name:
+          title: Resource Group Name
           type: string
-          description: Resource Group name
-          default: test1
-        enable_rbac_authorization:
-          type: boolean
-          default: true
-        enabled_for_deployment:
-          type: boolean
-          default: true
-        enabled_for_disk_encryption:
-          type: boolean
-          default: true
-        enabled_for_template_deployment:
-          type: boolean
-          default: false
-        purge_protection_enabled:
-          type: boolean
-          default: false
         sku_name:
+          title: SKU
           type: string
-          enum: [standard, premium]
+          enum:
+            - standard
+            - premium
           default: standard
         soft_delete_retention_days:
+          title: Soft Delete Retention (days)
           type: number
           default: 7
-        network_acls:
-          type: object
-          properties:
-            bypass:
-              type: string
-              default: AzureServices
-            default_action:
-              type: string
-              default: Allow
-            ip_rules:
-              type: array
-              items:
-                type: string
-              default: []
-            virtual_network_subnet_ids:
-              type: array
-              items:
-                type: string
-              default: []
+        purge_protection_enabled:
+          title: Purge Protection Enabled
+          type: boolean
+          default: true
+        enable_rbac_authorization:
+          title: Enable RBAC Authorization
+          type: boolean
+          default: true
 
-    - title: Role Assignment
+    - title: Network Configuration
       properties:
+        default_action:
+          title: Default Network Action
+          type: string
+          enum:
+            - Allow
+            - Deny
+          default: Allow
+        bypass:
+          title: Bypass
+          type: string
+          enum:
+            - AzureServices
+            - None
+          default: AzureServices
+
+    - title: RBAC Role Assignment
+      properties:
+        user_names:
+          title: User Principal Names
+          type: array
+          items:
+            type: string
+          description: Azure AD users
+        group_names:
+          title: Group Names
+          type: array
+          items:
+            type: string
         role_definition_name:
+          title: Role Definition
           type: string
           default: Key Vault Crypto User
-        user_names:
-          type: array
-          items:
-            type: string
-        group_names:
-          type: array
-          items:
-            type: string
-          default:
-            - testg
-        service_principal_names:
-          type: array
-          items:
-            type: string
-          default: []
 
   steps:
     - id: fetch-base
@@ -107,19 +94,31 @@ spec:
           user_names: ${{ parameters.user_names }}
           group_names: ${{ parameters.group_names }}
           role_definition_name: ${{ parameters.role_definition_name }}
+<<<<<<< HEAD
     - id: publish
       if: ${{ parameters.publish_to_github }}
       name: Publish Repository
       action: publish:github
       input:
         repoUrl: github.com?owner=sameerijoshi&repo=azure-keyvault-${{ parameters.key_vault_name }}
+=======
+
+    - id: publish
+      name: Publish Repository
+      action: publish:github
+      input:
+        repoUrl: github.com?owner=my-org&repo=azure-keyvault-${{ parameters.key_vault_name }}
+>>>>>>> 27894dde6c4138c901aafb11928595012ef2a3f3
         description: Terraform for Azure Key Vault
         defaultBranch: main
 
   output:
     links:
+<<<<<<< HEAD
       - title: Download dconf bundle (YAML)
         url: ${{ steps.fetch-base.output.basePath }}/dconf-bundle.yaml
 
+=======
+>>>>>>> 27894dde6c4138c901aafb11928595012ef2a3f3
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}
