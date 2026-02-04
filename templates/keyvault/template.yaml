@@ -90,30 +90,36 @@ spec:
           default: []
 
   steps:
-    - id: fetch
-      name: Fetch skeleton
+    - id: fetch-base
+      name: Fetch Terraform Base
       action: fetch:template
       input:
-        url: https://github.com/sameerijoshi/backstage/archive/refs/heads/main.zip
-        targetPath: .
+        url: ./skeleton
         values:
-          name: ${{ parameters.serviceName }}
           key_vault_name: ${{ parameters.key_vault_name }}
           resource_group_name: ${{ parameters.resource_group_name }}
           sku_name: ${{ parameters.sku_name }}
-          role_definition_name: ${{ parameters.role_definition_name }}
+          soft_delete_retention_days: ${{ parameters.soft_delete_retention_days }}
+          purge_protection_enabled: ${{ parameters.purge_protection_enabled }}
+          enable_rbac_authorization: ${{ parameters.enable_rbac_authorization }}
+          default_action: ${{ parameters.default_action }}
+          bypass: ${{ parameters.bypass }}
           user_names: ${{ parameters.user_names }}
           group_names: ${{ parameters.group_names }}
-          service_principal_names: ${{ parameters.service_principal_names }}
+          role_definition_name: ${{ parameters.role_definition_name }}
     - id: publish
-      name: Publish to Download
+      if: ${{ parameters.publish_to_github }}
+      name: Publish Repository
       action: publish:github
       input:
-        repoUrl: https://github.com/sameerijoshi/backstage/tree/main
-        entityFile: catalog-info.yaml
+        repoUrl: github.com?owner=sameerijoshi&repo=azure-keyvault-${{ parameters.key_vault_name }}
+        description: Terraform for Azure Key Vault
+        defaultBranch: main
+
   output:
     links:
-      - title: Source Repository
-        url: https://github.com/sameerijoshi/backstage/dconf-bundle
-      - title: Generated Catalog Entity
+      - title: Download dconf bundle (YAML)
+        url: ${{ steps.fetch-base.output.basePath }}/dconf-bundle.yaml
+
+      - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}
