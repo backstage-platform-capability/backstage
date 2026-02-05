@@ -94,31 +94,19 @@ spec:
           user_names: ${{ parameters.user_names }}
           group_names: ${{ parameters.group_names }}
           role_definition_name: ${{ parameters.role_definition_name }}
-<<<<<<< HEAD
     - id: publish
       if: ${{ parameters.publish_to_github }}
       name: Publish Repository
       action: publish:github
       input:
         repoUrl: github.com?owner=sameerijoshi&repo=azure-keyvault-${{ parameters.key_vault_name }}
-=======
-
-    - id: publish
-      name: Publish Repository
-      action: publish:github
-      input:
-        repoUrl: github.com?owner=my-org&repo=azure-keyvault-${{ parameters.key_vault_name }}
->>>>>>> 27894dde6c4138c901aafb11928595012ef2a3f3
         description: Terraform for Azure Key Vault
         defaultBranch: main
 
   output:
     links:
-<<<<<<< HEAD
       - title: Download dconf bundle (YAML)
         url: ${{ steps.fetch-base.output.basePath }}/dconf-bundle.yaml
 
-=======
->>>>>>> 27894dde6c4138c901aafb11928595012ef2a3f3
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}
