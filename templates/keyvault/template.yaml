@@ -76,6 +76,13 @@ spec:
           type: string
           default: Key Vault Crypto User
 
+    - title: Publish Options
+      properties:
+        publish_to_github:
+          title: Publish to GitHub
+          type: boolean
+          default: true
+
   steps:
     - id: fetch-base
       name: Fetch Terraform Base
@@ -94,6 +101,7 @@ spec:
           user_names: ${{ parameters.user_names }}
           group_names: ${{ parameters.group_names }}
           role_definition_name: ${{ parameters.role_definition_name }}
+
     - id: publish
       if: ${{ parameters.publish_to_github }}
       name: Publish Repository
@@ -105,8 +113,5 @@ spec:
 
   output:
     links:
-      - title: Download dconf bundle (YAML)
-        url: ${{ steps.fetch-base.output.basePath }}/dconf-bundle.yaml
-
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}

@@ -1,0 +1,15 @@
+key_vault_name: ${{ values.key_vault_name }}
+resource_group_name: ${{ values.resource_group_name }}
+sku_name: ${{ values.sku_name }}
+soft_delete_retention_days: ${{ values.soft_delete_retention_days }}
+purge_protection_enabled: ${{ values.purge_protection_enabled }}
+enable_rbac_authorization: ${{ values.enable_rbac_authorization }}
+
+network:
+  default_action: ${{ values.default_action }}
+  bypass: ${{ values.bypass }}
+
+rbac:
+  role_definition_name: ${{ values.role_definition_name }}
+  user_names: ${{ values.user_names }}
+  group_names: ${{ values.group_names }}
