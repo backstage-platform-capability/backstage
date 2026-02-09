@@ -116,7 +116,7 @@ spec:
       input:
         url: ./skeleton
         values:
-          component_name: ${{ parameters.component_name }}
+          vm_name: ${{ parameters.vm_name }}
           tier_type: ${{ parameters.tier_type }}
           compliance_type: ${{ parameters.compliance_type }}
           database_type: ${{ parameters.database_type }}
@@ -125,7 +125,6 @@ spec:
           vm_count: ${{ parameters.vm_count }}
           sku: ${{ parameters.sku }}
           os_version: ${{ parameters.os_version }}
-          infra_combination: ${{ parameters.infra_combination }}
 
     - id: publish
       if: ${{ parameters.publish_to_github }}
