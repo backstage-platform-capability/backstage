@@ -20,7 +20,6 @@ spec:
         - vm_count
         - sku
         - os_version
-        - infra_combination
 
       properties:
         component_name:
