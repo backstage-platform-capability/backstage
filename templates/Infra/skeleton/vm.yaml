@@ -18,9 +18,9 @@ windows_vms: {%- for wvm in values.dependencies %}
   {% endif %}
 {% endfor %}
 
-{% if values.os_type == "linux" %}
 linux_vms: {%- for lvm in values.dependencies %}
   instance0${{ loop.index }}:
+  {% if values.os_type == "linux" %}
   - name: "${{ lvm.vm_name }}"
     resource_group_name: "poc-vijesh-tfstate"
     admin_username: "azureuser"
