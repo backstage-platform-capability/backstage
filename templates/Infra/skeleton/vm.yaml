@@ -1,6 +1,6 @@
 {% if values.os_type == "Windows" %}
 windows_vms:
-  - name: "{{ values.component_name }}"
+  - name: "${{ values.vm_name }}"
     resource_group_name: "iac-poc-rg-001"
     key_vault_name: "iac-poc-kv-001"
     key_vault_resource_group_name: "iac-poc-rg-001"
