@@ -15,10 +15,6 @@ spec:
         - compliance_type
         - database_type
         - compute_type
-        - os_type
-        - vm_count
-        - sku
-        - os_version
 
       properties:
         tier_type:
@@ -80,7 +76,6 @@ spec:
                         vm_name:
                           title: Virtual Machine Name
                           type: string
-                          description: Name of the Virtual Machine
                         sku:
                           title: SKU
                           type: string
@@ -90,6 +85,43 @@ spec:
                             - Standard_D4s_v3
                             - Standard_E2s_v3
                             - Standard_E4s_v3
+                        resource_group_name:
+                          title: Resource Group Name
+                          type: string
+                        key_vault_name:
+                          title: Key Vault Name
+                          type: string
+                        nic_name:
+                          title: NIC Name
+                          type: string
+                        os_disk_type:
+                          title: OS Disk Type
+                          type: string
+                          enum: [StandardSSD_LRS, Standard_LRS]
+                        managed_disk_name:
+                          title: Managed Disk Name
+                          type: string
+                        disk_size:
+                          title: Disk Size
+                          type: string
+                          default: "1GB"
+                        disk_mount:
+                          title: Disk Mount Path
+                          type: string
+                          default: "/disk-0-0"
+                        admin_username:
+                          title: Admin Username
+                          type: string
+                          default: "azureuser"
+                        admin_password_secret_name:
+                          title: Admin Password Secret Name
+                          type: string
+                        vnet_name:
+                          title: VNet Name
+                          type: string
+                        subnet_name:
+                          title: Subnet Name
+                          type: string
 
                     - properties:
                         os_type:
@@ -120,6 +152,17 @@ spec:
           sku: ${{ parameters.sku }}
           os_type: ${{ parameters.os_type }}
           os_version: ${{ parameters.os_version }}
+          resource_group_name: ${{ parameters.resource_group_name }}
+          key_vault_name: ${{ parameters.key_vault_name }}
+          nic_name: ${{ parameters.nic_name }}
+          os_disk_type: ${{ parameters.os_disk_type }}
+          managed_disk_name: ${{ parameters.managed_disk_name }}
+          disk_size: ${{ parameters.disk_size }}
+          disk_mount: ${{ parameters.disk_mount }}
+          admin_username: ${{ parameters.admin_username }}
+          admin_password_secret_name: ${{ parameters.admin_password_secret_name }}
+          vnet_name: ${{ parameters.vnet_name }}
+          subnet_name: ${{ parameters.subnet_name }}
 
     - id: publish
       if: ${{ parameters.publish_to_github }}
