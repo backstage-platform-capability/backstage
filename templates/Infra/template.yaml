@@ -101,6 +101,13 @@ spec:
             - Windows-2019
             - Windows-2022
 
+    - title: Publish Options
+      properties:
+        publish_to_github:
+          title: Publish to GitHub
+          type: boolean
+          default: true
+          
   steps:
     - id: fetch-base
       name: Fetch Skeleton
