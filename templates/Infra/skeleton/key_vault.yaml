@@ -1,0 +1,31 @@
+key_vaults:
+  key1:
+    key_vault_name: "iac-poc-kv-001"
+    resource_group_name: "test1"
+    enable_rbac_authorization: true
+    enabled_for_deployment: true
+    enabled_for_disk_encryption: true
+    enabled_for_template_deployment: false
+    purge_protection_enabled: false
+    sku_name: "standard"
+    soft_delete_retention_days: 7
+
+    additional_tags:
+      env: "IAC"
+
+    network_acls:
+      bypass: "AzureServices"
+      default_action: "Allow"
+      ip_rules: []
+      virtual_network_subnet_ids: []
+
+role_assign:
+  key1:
+    key_vault_name: "iac-poc-rg-001"
+    service_principal_names: null
+    user_names:
+      - "test@ydvyuvigmail.onmicrosoft.com"
+      - "primstr@ydvyuvigmail.onmicrosoft.com"
+    group_names:
+      - "testg"
+    role_definition_name: "Key Vault Crypto User"
