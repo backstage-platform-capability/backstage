@@ -115,7 +115,6 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: .
         values:
           vm_name: ${{ parameters.vm_name }}
           sku: ${{ parameters.sku }}
