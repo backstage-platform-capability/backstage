@@ -20,7 +20,7 @@ windows_vms: []
 
 {% if values.os_type == "Linux" %}
 linux_vms:
-  - name: "${{ values.vm_name }}"
+  - name: "{{ values.vm_name }}"
     resource_group_name: "poc-vijesh-tfstate"
     admin_username: "azureuser"
     key_vault_name: "vijesh-test-kv"
