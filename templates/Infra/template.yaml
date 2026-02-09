@@ -115,15 +115,11 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
+        targetPath: .
         values:
           vm_name: ${{ parameters.vm_name }}
-          tier_type: ${{ parameters.tier_type }}
-          compliance_type: ${{ parameters.compliance_type }}
-          database_type: ${{ parameters.database_type }}
-          compute_type: ${{ parameters.compute_type }}
-          os_type: ${{ parameters.os_type }}
-          vm_count: ${{ parameters.vm_count }}
           sku: ${{ parameters.sku }}
+          os_type: ${{ parameters.os_type }}
           os_version: ${{ parameters.os_version }}
 
     - id: publish
