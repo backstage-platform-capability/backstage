@@ -110,6 +110,7 @@ spec:
         repoUrl: github.com?owner=sameerijoshi&repo=azure-keyvault-${{ parameters.key_vault_name }}
         description: Terraform for Azure Key Vault
         defaultBranch: main
+        repoVisibility: public
 
   output:
     links:
