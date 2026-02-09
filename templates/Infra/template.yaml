@@ -101,18 +101,6 @@ spec:
             - Windows-2019
             - Windows-2022
 
-    - title: Repository Info
-      required:
-        - repoUrl
-      properties:
-        repoUrl:
-          title: GitHub Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - github.com
-
   steps:
     - id: fetch-base
       name: Fetch Skeleton
