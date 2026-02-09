@@ -107,12 +107,12 @@ spec:
       name: Publish Repository
       action: publish:github
       input:
-        repoUrl: github.com?owner=backstage-platform-capability&repo=azure-keyvault-${{ parameters.key_vault_name }}
+        repoUrl: github.com?owner=backstage-platform-capability&repo=azure-key-vault-${{ parameters.key_vault_name }}
         description: Terraform for Azure Key Vault
         defaultBranch: main
         repoVisibility: public
 
   output:
     links:
-      - title: Repository
+      - title: Download Template
         url: ${{ steps.publish.output.remoteUrl }}

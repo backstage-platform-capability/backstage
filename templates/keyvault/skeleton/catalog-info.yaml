@@ -1,9 +1,0 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: azure-keyvault-template
-  description: Azure Key Vault Provisioning Template
-spec:
-  type: service
-  owner: platform-team
-  lifecycle: experimental

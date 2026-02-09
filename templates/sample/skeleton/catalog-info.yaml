@@ -1,9 +1,0 @@
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: sample
-  description: Sample Service
-spec:
-  type: service
-  owner: admins
-  lifecycle: experimental
