@@ -1,6 +1,7 @@
-{% if values.os_type == "Windows" %}
-windows_vms:
-  - name: "{{ vm_name }}"
+windows_vms: {%- for wvm in values.dependencies %}
+  instance0${{ loop.index }}:
+  {% if values.os_type == "windows" %}
+  - name: "${{ wvm.vm_name }}"
     resource_group_name: "iac-poc-rg-001"
     key_vault_name: "iac-poc-kv-001"
     key_vault_resource_group_name: "iac-poc-rg-001"
@@ -10,17 +11,17 @@ windows_vms:
     network_interface_names:
       - "nic-cus-app-dev-001"
     os_disk_storage_account_type: "StandardSSD_LRS"
-    source_image_publisher: "MicrosoftWindowsServer"
-    source_image_offer: "WindowsServer"
+    source_image_publisher: "MicrosoftwindowsServer"
+    source_image_offer: "windowsServer"
     source_image_sku: "2016-Datacenter"
     source_image_version: "latest"
-{% else %}
-windows_vms: []
-{% endif %}
+  {% endif %}
+{% endfor %}
 
-{% if values.os_type == "Linux" %}
-linux_vms:
-  - name: "{{ values.vm_name }}"
+{% if values.os_type == "linux" %}
+linux_vms: {%- for lvm in values.dependencies %}
+  instance0${{ loop.index }}:
+  - name: "${{ lvm.vm_name }}"
     resource_group_name: "poc-vijesh-tfstate"
     admin_username: "azureuser"
     key_vault_name: "vijesh-test-kv"
@@ -33,11 +34,10 @@ linux_vms:
     source_image_publisher: "Canonical"
     source_image_sku: "16.04-LTS"
     source_image_version: "latest"
-{% else %}
-linux_vms: []
-{% endif %}
+  {% endif %}
+{% endfor %}
 
-{% if values.os_type == "Windows" %}
+{% if values.os_type == "windows" %}
 network_interfaces:
   - name: "nic-cus-app-dev-001"
     ip_configurations:
@@ -58,7 +58,7 @@ network_interfaces:
         public_ip_name: null
 {% endif %}
 
-{% if values.os_type == "Windows" %}
+{% if values.os_type == "windows" %}
 attach_managed_disks:
   - managed_data_disk_name: "iac-poc-disk-001"
     virtual_machine_name: "vm-cus-app-dev-01"
@@ -68,7 +68,7 @@ attach_managed_disks:
     managed_data_disk_name: "ansibletest_OsDisk_1_3cdae46b541643a3acdcc04ea5aa84ab"
 {% endif %}
 
-{% if values.os_type == "Windows" %}
+{% if values.os_type == "windows" %}
 disk_init:
   - virtual_machine_names:
       - "vm-cus-app-dev-01"

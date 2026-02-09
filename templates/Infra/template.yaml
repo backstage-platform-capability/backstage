@@ -54,7 +54,7 @@ spec:
                 os_type:
                   title: OS Type
                   type: string
-                  enum: [Linux, Windows]
+                  enum: [linux, windows]
 
                 vm_count:
                   title: Number of VMs
@@ -68,7 +68,7 @@ spec:
                   oneOf:
                     - properties:
                         os_type:
-                          const: Linux
+                          const: linux
                         os_version:
                           title: OS Version
                           type: string
@@ -93,7 +93,7 @@ spec:
 
                     - properties:
                         os_type:
-                          const: Windows
+                          const: windows
                         os_version:
                           title: OS Version
                           type: string
