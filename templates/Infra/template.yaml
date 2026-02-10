@@ -59,6 +59,7 @@ spec:
                 vm_list:
                   title: Virtual Machines
                   type: array
+                  minItems: 1
                   items:
                     type: object
                     properties:
