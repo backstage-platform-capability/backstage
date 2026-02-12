@@ -7,7 +7,6 @@ metadata:
 spec:
   owner: user:default/platform-team
   type: service
-
   parameters:
     - title: Application Details
       required:
@@ -16,127 +15,133 @@ spec:
         - database_type
         - compute_type
       properties:
-        tier_type:
-          title: Tier Type
-          type: string
-          enum: [3-tier, 2-tier]
-
-        compliance_type:
-          title: Compliance Type
-          type: string
-          enum: [PII, PCI, GDPR]
-
-        database_type:
-          title: Database Type
-          type: string
-          enum: [SQLMI, SQLDB, PGSQL]
-
-        compute_type:
-          title: Compute Type
-          type: string
-          enum: [AKS, VM]
-
-      dependencies:
-        compute_type:
-          oneOf:
-            - properties:
-                compute_type:
-                  const: AKS
-
-            - properties:
-                compute_type:
-                  const: VM
-                os_type:
-                  title: OS Type
-                  type: string
-                  enum: [linux, windows]
-                vm_count:
-                  title: Number of VMs
-                  type: integer
-                  default: 1
-                  minimum: 1
-                  maximum: 20
-                vm_list:
-                  title: Virtual Machines
-                  type: array
-                  minItems: 1
-                  items:
-                    type: object
-                    properties:
-                      vm_name:
-                        title: VM Name
+        Infra:
+          type: array
+          title: Infrastructure Components
+          items: 
+            type: object
+            properties:
+              tier_type:
+                title: Tier Type
+                type: string
+                enum: [3-tier, 2-tier]
+              compliance_type:
+                title: Compliance Type
+                type: string
+                enum: [PII, PCI, GDPR]
+              database_type:
+                title: Database Type
+                type: string
+                enum: [SQLMI, SQLDB, PGSQL]
+              compute_type:
+                title: Compute Type
+                type: string
+                enum: [AKS, VM]
+            dependencies:
+              compute_type:
+                oneOf:
+                  - properties:
+                      compute_type:
+                        const: AKS
+                      subscription:
+                        title: Infrastructure Details
+                        description: Choose the Infrastructure details based on the compute type selection
+                        type: object
+                  - properties:
+                      compute_type:
+                        const: VM
+                      subscription:
+                        title: Infrastructure Details
+                        description: Choose the Infrastructure details based on the compute type selection
+                        type: object
+                        properties:
+                          os_type:
+                            title: OS Type
+                            type: string
+                            enum: [linux, windows]
+                          vm_count:
+                            title: Number of VMs
+                            type: integer
+                            default: 1
+                            minimum: 1
+                            maximum: 20
+                          vm_list:
+                            title: Virtual Machines
+                            type: array
+                            minItems: 1
+                            items:
+                              type: object
+                              properties:
+                                vm_name:
+                                  title: VM Name
+                                  type: string
+                          sku:
+                            title: SKU
+                            type: string
+                            enum:
+                              - Standard_1
+                              - Standard_D2
+                              - Standard_D3
+                              - Standard_E1
+                              - Standard_E2
+                          resource_group_name:
+                            title: Resource Group Name
+                            type: string
+                          key_vault_name:
+                            title: Key Vault Name
+                            type: string
+                          nic_name:
+                            title: NIC Name
+                            type: string
+                          os_disk_type:
+                            title: OS Disk Type
+                            type: string
+                            enum: [StandardSSD_LRS, Standard_LRS]
+                          managed_disk_name:
+                            title: Managed Disk Name
+                            type: string
+                          disk_size:
+                            title: Disk Size
+                            type: string
+                            default: "1GB"
+                          disk_mount:
+                            title: Disk Mount Path
+                            type: string
+                            default: "/disk-0-0"
+                          admin_username:
+                            title: Admin Username
+                            type: string
+                            default: "azureuser"
+                          admin_password_secret_name:
+                            title: Admin Password Secret Name
+                            type: string
+                          vnet_name:
+                            title: VNet Name
+                            type: string
+                          subnet_name:
+                            title: Subnet Name
+                            type: string
+                  - properties:
+                      os_type:
+                        const: linux
+                      os_version:
+                        title: OS Version
                         type: string
-                sku:
-                  title: SKU
-                  type: string
-                  enum:
-                    - Standard_1
-                    - Standard_D2
-                    - Standard_D3
-                    - Standard_E1
-                    - Standard_E2
-                resource_group_name:
-                  title: Resource Group Name
-                  type: string
-                key_vault_name:
-                  title: Key Vault Name
-                  type: string
-                nic_name:
-                  title: NIC Name
-                  type: string
-                os_disk_type:
-                  title: OS Disk Type
-                  type: string
-                  enum: [StandardSSD_LRS, Standard_LRS]
-                managed_disk_name:
-                  title: Managed Disk Name
-                  type: string
-                disk_size:
-                  title: Disk Size
-                  type: string
-                  default: "1GB"
-                disk_mount:
-                  title: Disk Mount Path
-                  type: string
-                  default: "/disk-0-0"
-                admin_username:
-                  title: Admin Username
-                  type: string
-                  default: "azureuser"
-                admin_password_secret_name:
-                  title: Admin Password Secret Name
-                  type: string
-                vnet_name:
-                  title: VNet Name
-                  type: string
-                subnet_name:
-                  title: Subnet Name
-                  type: string
-
-              dependencies:
-                os_type:
-                  oneOf:
-                    - properties:
-                        os_type:
-                          const: linux
-                        os_version:
-                          title: OS Version
-                          type: string
-                          enum:
-                            - Ubuntu-20.04
-                            - Ubuntu-22.04
-                            - RHEL-8
-                            - RHEL-9
-                    - properties:
-                        os_type:
-                          const: windows
-                        os_version:
-                          title: OS Version
-                          type: string
-                          enum:
-                            - Windows-2019
-                            - Windows-2022
-                      required: [os_version]
+                        enum:
+                          - Ubuntu-20.04
+                          - Ubuntu-22.04
+                          - RHEL-8
+                          - RHEL-9
+                  - properties:
+                      os_type:
+                        const: windows
+                      os_version:
+                        title: OS Version
+                        type: string
+                        enum:
+                          - Windows-2019
+                          - Windows-2022
+                    required: [os_version]
 
     - title: Publish Options
       properties:
@@ -152,21 +157,11 @@ spec:
       input:
         url: ./skeleton
         values:
-          vm_list: ${{ parameters.vm_list }}
-          sku: ${{ parameters.sku }}
-          os_type: ${{ parameters.os_type }}
-          os_version: ${{ parameters.os_version }}
-          resource_group_name: ${{ parameters.resource_group_name }}
-          key_vault_name: ${{ parameters.key_vault_name }}
-          nic_name: ${{ parameters.nic_name }}
-          os_disk_type: ${{ parameters.os_disk_type }}
-          managed_disk_name: ${{ parameters.managed_disk_name }}
-          disk_size: ${{ parameters.disk_size }}
-          disk_mount: ${{ parameters.disk_mount }}
-          admin_username: ${{ parameters.admin_username }}
-          admin_password_secret_name: ${{ parameters.admin_password_secret_name }}
-          vnet_name: ${{ parameters.vnet_name }}
-          subnet_name: ${{ parameters.subnet_name }}
+          dependencies: ${{ parameters.Infra }}
+          tier_type: ${{ parameters.tier_type }}
+          compliance_type: ${{ parameters.compliance_type }}
+          database_type: ${{ parameters.database_type }}
+          compute_type: ${{ parameters.compute_type }}
 
     - id: publish
       if: ${{ parameters.publish_to_github }}
