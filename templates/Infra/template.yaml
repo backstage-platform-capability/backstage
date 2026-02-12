@@ -165,6 +165,7 @@ spec:
         - "**/*.zip"
       input:
         url: ./skeleton
+        templateFileExtension: ".njk"
         values:
           dependencies: ${{ parameters.Infra }}
           tier_type: ${{ parameters.Infra[0].tier_type }}
