@@ -159,15 +159,19 @@ spec:
     - id: fetch-base
       name: Fetch Skeleton
       action: fetch:template
+      copyWithoutRender:
+        - "**/*.png"
+        - "**/*.jpg"
+        - "**/*.zip"
       input:
         url: ./skeleton
         values:
           dependencies: ${{ parameters.Infra }}
-          tier_type: ${{ parameters.tier_type }}
-          compliance_type: ${{ parameters.compliance_type }}
-          database_type: ${{ parameters.database_type }}
-          compute_type: ${{ parameters.compute_type }}
-          resource_label: ${{ parameters.resource_label }}
+          tier_type: ${{ parameters.Infra[0].tier_type }}
+          compliance_type: ${{ parameters.Infra[0].compliance_type }}
+          database_type: ${{ parameters.Infra[0].database_type }}
+          compute_type: ${{ parameters.Infra[0].compute_type }}
+          resource_label: ${{ parameters.Infra[0].resource_label }}
 
     - id: publish
       if: ${{ parameters.publish_to_github }}
@@ -182,6 +186,4 @@ spec:
   output:
     links:
       - title: Download Template
-
-
         url: ${{ steps.publish.output.remoteUrl }}
