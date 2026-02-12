@@ -174,7 +174,7 @@ spec:
       name: Publish Repository
       action: publish:github
       input:
-        repoUrl: github.com?owner=backstage-platform-capability&repo=infra-provision-${{ parameters.resource_label }}
+        repoUrl: github.com?owner=backstage-platform-capability&repo=infra-provision-${{ parameters.Infra[0].resource_label }}
         description: Terraform for Azure Infra
         defaultBranch: main
         repoVisibility: public
@@ -182,5 +182,6 @@ spec:
   output:
     links:
       - title: Download Template
+
 
         url: ${{ steps.publish.output.remoteUrl }}
