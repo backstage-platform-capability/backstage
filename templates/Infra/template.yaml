@@ -18,6 +18,11 @@ spec:
           items: 
             type: object
             properties:
+              resource_label:
+                title: Resource Label
+                type: string
+                enum: ['01', '02', '03', '04', '05']
+                enumNames: ['01', '02', '03', '04', '05']
               tier_type:
                 title: Tier Type
                 type: string
@@ -162,13 +167,14 @@ spec:
           compliance_type: ${{ parameters.compliance_type }}
           database_type: ${{ parameters.database_type }}
           compute_type: ${{ parameters.compute_type }}
+          resource_label: ${{ parameters.resource_label }}
 
     - id: publish
       if: ${{ parameters.publish_to_github }}
       name: Publish Repository
       action: publish:github
       input:
-        repoUrl: github.com?owner=backstage-platform-capability&repo=infra-provision
+        repoUrl: github.com?owner=backstage-platform-capability&repo=infra-provision-${{ parameters.resource_label }}
         description: Terraform for Azure Infra
         defaultBranch: main
         repoVisibility: public
