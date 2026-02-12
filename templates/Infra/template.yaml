@@ -10,10 +10,7 @@ spec:
   parameters:
     - title: Application Details
       required:
-        - tier_type
-        - compliance_type
-        - database_type
-        - compute_type
+        - Infra
       properties:
         Infra:
           type: array
@@ -176,4 +173,5 @@ spec:
   output:
     links:
       - title: Download Template
+
         url: ${{ steps.publish.output.remoteUrl }}
