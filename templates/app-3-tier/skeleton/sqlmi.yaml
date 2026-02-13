@@ -1,94 +1,46 @@
-## NOTE: Values are rendered by Backstage template. Do not edit placeholders manually.
+# NOTE: Values are rendered by Backstage template. Do not edit placeholders manually.
 
-# CAF-style resource group and key vault
-resource_group_name = "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+resource_group_name: "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
 
-key_vault_name    = "kv-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-key_vault_rg_name = "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+key_vault_name: "kv-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+key_vault_rg_name: "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
 
-# Use CAF-based names (or explicit names if disabled)
-mssql_managed_instance = {
-  "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
-    license_type                     = "${{ licenseType }}"
-    location                         = "${{ azureRegion }}"
-    sku_name                         = "${{ skuName }}"
-    storage_size_in_gb               = ${{ storageSizeInGb }}
-    subnet_name                      = {% if useStandardCafVnetNames %}"sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"{% else %}"${{ existingSubnetName }}"{% endif %}
-    vnet_name                        = {% if useStandardCafVnetNames %}"vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"{% else %}"${{ existingVnetName }}"{% endif %}
-    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    vcores                           = ${{ vcores }}
-    failover_instance                = false
-    primary_instance_name            = null
-    administrator_login              = "${{ administratorLogin }}"
-    admin_login_username_secret_name = "${{ administratorLogin }}-username"
-    admin_login_password_secret_name = "${{ administratorLogin }}-password"
-    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
-    collation                        = null
-    proxy_override                   = null
-    public_data_endpoint_enabled     = false
-    storage_account_type             = "LRS"
-    timezone_id                      = null
-    identity = { type = "SystemAssigned" }
-  }
+mssql_managed_instances:
+  # Primary instance
+  - name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+    license_type: "${{ licenseType }}"
+    location: "${{ azureRegion }}"
+    sku_name: "${{ skuName }}"
+    vcores: ${{ vcores }}
+    storage_size_in_gb: ${{ storageSizeInGb }}
+    {% if useStandardCafVnetNames %}
+    subnet_name: "sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"
+    vnet_name: "vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+    {% else %}
+    subnet_name: "${{ existingSubnetName }}"
+    vnet_name: "${{ existingVnetName }}"
+    {% endif %}
+    vnet_rg_name: {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    administrator_login: "${{ administratorLogin }}"
+    admin_login_username_secret_name: "${{ administratorLogin }}-username"
+    admin_login_password_secret_name: "${{ administratorLogin }}-password"
+    secret_expiration_date: {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    collation: null
+    proxy_override: null
+    public_data_endpoint_enabled: false
+    storage_account_type: "LRS"
+    timezone_id: null
+    identity:
+      type: "SystemAssigned"
+    failover_instance: false
+    primary_instance_name: null
 
   {% if enableFailover %}
-  "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002" = {
-    license_type                     = "${{ licenseType }}"
-    location                         = "${{ azureRegion }}"
-    sku_name                         = "${{ skuName }}"
-    storage_size_in_gb               = ${{ storageSizeInGb }}
-    subnet_name                      = {% if useStandardCafVnetNames %}"sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"{% else %}"${{ existingSubnetName }}"{% endif %}
-    vnet_name                        = {% if useStandardCafVnetNames %}"vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"{% else %}"${{ existingVnetName }}"{% endif %}
-    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    vcores                           = ${{ vcores }}
-    failover_instance                = true
-    primary_instance_name            = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-    administrator_login              = "${{ administratorLogin }}"
-    admin_login_username_secret_name = "${{ administratorLogin }}2-username"
-    admin_login_password_secret_name = "${{ administratorLogin }}2-password"
-    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
-    collation                        = null
-    proxy_override                   = null
-    public_data_endpoint_enabled     = false
-    storage_account_type             = "LRS"
-    timezone_id                      = null
-    identity = { type = "SystemAssigned" }
-  }
-  {% endif %}
-}
-
-# Databases
-mmi_database = {
-  {% for db in databaseNames %}"{{ db }}" = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"{% if not loop.last %},{% endif %}{% endfor %}
-}
-
-# AAD admins
-mmi_admin_assignment = {
-  "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
-    login_username              = "${{ administratorLogin }}"
-    users                       = [{% for u in adminUsers %}"{{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-    service_principal_names     = []
-    group_names                 = []
-    azuread_authentication_only = ${{ azureAdAuthOnly | default(false) }}
-  }
-}
-
-# Failover group (only if enabled)
-{% if enableFailover %}
-mmi_failover_group = {
-  "fg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
-    managed_instance_name                     = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-    failover_managed_instance_name            = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002"
-    readonly_endpoint_failover_policy_enabled = false
-    failover_policy_mode                      = "Automatic"
-    failover_grace_minutes                    = 60
-  }
-}
-{% else %}
-mmi_failover_group = {}
-{% endif %}
-
-mmi_additional_tags = {
-  environment = "${{ environment }}"
-  application = "${{ appCode }}"
-}
+  # Secondary (failover) instance
+  - name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002"
+    license_type: "${{ licenseType }}"
+    location: "${{ azureRegion }}"
+    sku_name: "${{ skuName }}"
+    vcores: ${{ vcores }}
+    storage_size_in_gb: ${{ storageSizeInGb }}
+    {% if useStandardCafVnetNames %}
