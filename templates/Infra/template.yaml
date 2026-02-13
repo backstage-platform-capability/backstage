@@ -176,7 +176,7 @@ spec:
 
     - id: publish
       if: ${{ parameters.publish_to_github }}
-      name: Publish Repository
+      name: Publish to SCM
       action: publish:github
       input:
         repoUrl: github.com?owner=backstage-platform-capability&repo=infra-provision-${{ parameters.Infra[0].resource_label }}

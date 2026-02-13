@@ -227,12 +227,12 @@ spec:
     - id: publish
       name: Publish to SCM
       action: publish:github
-      if: ${{ parameters.repoUrl }}
       input:
         repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ parameters.appCode }}
         description: Azure SQL Managed Instance infra for ${{ parameters.appCode }} (${{ parameters.environment }})
         defaultBranch: main
-        protectDefaultBranch: true
+        repoVisibility: public
+
 
     - id: register
       name: Register in Backstage
