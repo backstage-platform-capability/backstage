@@ -2,18 +2,18 @@ windows_vms:
 {% if values.dependencies[0].subscription.os_type == "windows" %}
 {% for wvm in values.dependencies[0].subscription.vm_list %}
   - name: "${{ wvm.vm_name }}"
-    resource_group_name: "{{ values.dependencies[0].subscription.resource_group_name }}"
-    key_vault_name: "{{ values.dependencies[0].subscription.key_vault_name }}"
-    key_vault_resource_group_name: "{{ values.dependencies[0].subscription.resource_group_name }}"
-    admin_password_secret_name: "{{ values.dependencies[0].subscription.admin_password_secret_name }}"
-    admin_username: "{{ values.dependencies[0].subscription.admin_username }}"
-    size: "{{ values.dependencies[0].subscription.sku }}"
+    resource_group_name: "${{ values.dependencies[0].subscription.resource_group_name }}"
+    key_vault_name: "${{ values.dependencies[0].subscription.key_vault_name }}"
+    key_vault_resource_group_name: "${{ values.dependencies[0].subscription.resource_group_name }}"
+    admin_password_secret_name: "${{ values.dependencies[0].subscription.admin_password_secret_name }}"
+    admin_username: "${{ values.dependencies[0].subscription.admin_username }}"
+    size: "${{ values.dependencies[0].subscription.sku }}"
     network_interface_names:
-      - "{{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
-    os_disk_storage_account_type: "{{ values.dependencies[0].subscription.os_disk_type }}"
+      - "${{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
+    os_disk_storage_account_type: "${{ values.dependencies[0].subscription.os_disk_type }}"
     source_image_publisher: "MicrosoftWindowsServer"
     source_image_offer: "WindowsServer"
-    source_image_sku: "{{ values.dependencies[0].subscription.os_version }}"
+    source_image_sku: "${{ values.dependencies[0].subscription.os_version }}"
     source_image_version: "latest"
 {% endfor %}
 {% endif %}
@@ -22,43 +22,43 @@ linux_vms:
 {% if values.dependencies[0].subscription.os_type == "linux" %}
 {% for lvm in values.dependencies[0].subscription.vm_list %}
   - name: "${{ lvm.vm_name }}"
-    resource_group_name: "{{ values.dependencies[0].subscription.resource_group_name }}"
-    admin_username: "{{ values.dependencies[0].subscription.admin_username }}"
-    key_vault_name: "{{ values.dependencies[0].subscription.key_vault_name }}"
-    key_vault_resource_group_name: "{{ values.dependencies[0].subscription.resource_group_name }}"
-    size: "{{ values.dependencies[0].subscription.sku }}"
+    resource_group_name: "${{ values.dependencies[0].subscription.resource_group_name }}"
+    admin_username: "${{ values.dependencies[0].subscription.admin_username }}"
+    key_vault_name: "${{ values.dependencies[0].subscription.key_vault_name }}"
+    key_vault_resource_group_name: "${{ values.dependencies[0].subscription.resource_group_name }}"
+    size: "${{ values.dependencies[0].subscription.sku }}"
     network_interface_names:
-      - "{{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
-    os_disk_storage_account_type: "{{ values.dependencies[0].subscription.os_disk_type }}"
+      - "${{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
+    os_disk_storage_account_type: "${{ values.dependencies[0].subscription.os_disk_type }}"
     source_image_offer: "UbuntuServer"
     source_image_publisher: "Canonical"
-    source_image_sku: "{{ values.dependencies[0].subscription.os_version }}"
+    source_image_sku: "${{ values.dependencies[0].subscription.os_version }}"
     source_image_version: "latest"
 {% endfor %}
 {% endif %}
 
 network_interfaces:
 {% for vm in values.dependencies[0].subscription.vm_list %}
-  - name: "{{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
+  - name: "${{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
     ip_configurations:
       - name: "ip-config-{{ loop.index }}"
-        vnet_name: "{{ values.dependencies[0].subscription.vnet_name }}"
-        subnet_name: "{{ values.dependencies[0].subscription.subnet_name }}"
-        vnet_resource_group_name: "{{ values.dependencies[0].subscription.resource_group_name }}"
+        vnet_name: "${{ values.dependencies[0].subscription.vnet_name }}"
+        subnet_name: "${{ values.dependencies[0].subscription.subnet_name }}"
+        vnet_resource_group_name: "${{ values.dependencies[0].subscription.resource_group_name }}"
 {% endfor %}
 
 attach_managed_disks:
 {% for vm in values.dependencies[0].subscription.vm_list %}
-  - virtual_machine_name: "{{ vm.vm_name }}"
-    managed_data_disk_name: "{{ values.dependencies[0].subscription.managed_disk_name }}-{{ loop.index }}"
+  - virtual_machine_name: "${{ vm.vm_name }}"
+    managed_data_disk_name: "${{ values.dependencies[0].subscription.managed_disk_name }}-{{ loop.index }}"
 {% endfor %}
 
 disk_init:
 {% for vm in values.dependencies[0].subscription.vm_list %}
-  - virtual_machine_name: "{{ vm.vm_name }}"
+  - virtual_machine_name: "${{ vm.vm_name }}"
     re_run_disk_init: false
     partitions:
       - lun: 0
-        size: "{{ values.dependencies[0].subscription.disk_size }}"
-        mount: "{{ values.dependencies[0].subscription.disk_mount }}"
+        size: "${{ values.dependencies[0].subscription.disk_size }}"
+        mount: "${{ values.dependencies[0].subscription.disk_mount }}"
 {% endfor %}
