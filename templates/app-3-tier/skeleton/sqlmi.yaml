@@ -6,21 +6,17 @@ resource_group_name = "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environm
 key_vault_name    = "kv-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
 key_vault_rg_name = "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
 
-# Derive VNet and Subnet names
-{% if useStandardCafVnetNames %}
-# CAF-style network names
-# VNet: vnet-<regionShort>-<appCode>-<env>-001
-# Subnet: sn-<regionShort>-sharedservices-<env>
+# Use CAF-based names (or explicit names if disabled)
 mssql_managed_instance = {
   "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
-    license_type                     = "{{ licenseType }}"
-    location                         = "{{ azureRegion }}"
-    sku_name                         = "{{ skuName }}"
-    storage_size_in_gb               = {{ storageSizeInGb }}
-    subnet_name                      = "sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"
-    vnet_name                        = "vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+    license_type                     = "${{ licenseType }}"
+    location                         = "${{ azureRegion }}"
+    sku_name                         = "${{ skuName }}"
+    storage_size_in_gb               = ${{ storageSizeInGb }}
+    subnet_name                      = {% if useStandardCafVnetNames %}"sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"{% else %}"${{ existingSubnetName }}"{% endif %}
+    vnet_name                        = {% if useStandardCafVnetNames %}"vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"{% else %}"${{ existingVnetName }}"{% endif %}
     vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    vcores                           = {{ vcores }}
+    vcores                           = ${{ vcores }}
     failover_instance                = false
     primary_instance_name            = null
     administrator_login              = "${{ administratorLogin }}"
@@ -32,64 +28,7 @@ mssql_managed_instance = {
     public_data_endpoint_enabled     = false
     storage_account_type             = "LRS"
     timezone_id                      = null
-    identity = {
-      type = "SystemAssigned"
-    }
-  }
-
-  {% if enableFailover %}
-  "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002" = {
-    license_type                     = "{{ licenseType }}"
-    location                         = "{{ azureRegion }}"
-    sku_name                         = "{{ skuName }}"
-    storage_size_in_gb               = {{ storageSizeInGb }}
-    subnet_name                      = "sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"
-    vnet_name                        = "vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    vcores                           = {{ vcores }}
-    failover_instance                = true
-    primary_instance_name            = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-    administrator_login              = "${{ administratorLogin }}"
-    admin_login_username_secret_name = "${{ administratorLogin }}2-username"
-    admin_login_password_secret_name = "${{ administratorLogin }}2-password"
-    secret_expiration_date           = {% if secretExpirationDate %}"${{ secretExpirationDate }}"{% else %}null{% endif %}
-    collation                        = null
-    proxy_override                   = null
-    public_data_endpoint_enabled     = false
-    storage_account_type             = "LRS"
-    timezone_id                      = null
-    identity = {
-      type = "SystemAssigned"
-    }
-  }
-  {% endif %}
-}
-{% else %}
-# Use explicitly provided networking names
-mssql_managed_instance = {
-  "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
-    license_type                     = "${{ licenseType }}"
-    location                         = "${{ azureRegion }}"
-    sku_name                         = "${{ skuName }}"
-    storage_size_in_gb               = {{ storageSizeInGb }}
-    subnet_name                      = "${{ existingSubnetName }}"
-    vnet_name                        = "${{ existingVnetName }}"
-    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    vcores                           = {{ vcores }}
-    failover_instance                = false
-    primary_instance_name            = null
-    administrator_login              = "${{ administratorLogin }}"
-    admin_login_username_secret_name = "${{ administratorLogin }}-username"
-    admin_login_password_secret_name = "${{ administratorLogin }}-password"
-    secret_expiration_date           = {% if secretExpirationDate %}"${{ secretExpirationDate }}"{% else %}null{% endif %}
-    collation                        = null
-    proxy_override                   = null
-    public_data_endpoint_enabled     = false
-    storage_account_type             = "LRS"
-    timezone_id                      = null
-    identity = {
-      type = "SystemAssigned"
-    }
+    identity = { type = "SystemAssigned" }
   }
 
   {% if enableFailover %}
@@ -97,49 +36,44 @@ mssql_managed_instance = {
     license_type                     = "${{ licenseType }}"
     location                         = "${{ azureRegion }}"
     sku_name                         = "${{ skuName }}"
-    storage_size_in_gb               = {{ storageSizeInGb }}
-    subnet_name                      = "${{ existingSubnetName }}"
-    vnet_name                        = "${{ existingVnetName }}"
-    vnet_rg_name                     = {% if vnetResourceGroupName %}"${{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    vcores                           = {{ vcores }}
+    storage_size_in_gb               = ${{ storageSizeInGb }}
+    subnet_name                      = {% if useStandardCafVnetNames %}"sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"{% else %}"${{ existingSubnetName }}"{% endif %}
+    vnet_name                        = {% if useStandardCafVnetNames %}"vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"{% else %}"${{ existingVnetName }}"{% endif %}
+    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    vcores                           = ${{ vcores }}
     failover_instance                = true
     primary_instance_name            = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
     administrator_login              = "${{ administratorLogin }}"
     admin_login_username_secret_name = "${{ administratorLogin }}2-username"
     admin_login_password_secret_name = "${{ administratorLogin }}2-password"
-    secret_expiration_date           = {% if secretExpirationDate %}"${{ secretExpirationDate }}"{% else %}null{% endif %}
+    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
     collation                        = null
     proxy_override                   = null
     public_data_endpoint_enabled     = false
     storage_account_type             = "LRS"
     timezone_id                      = null
-    identity = {
-      type = "SystemAssigned"
-    }
+    identity = { type = "SystemAssigned" }
   }
   {% endif %}
 }
-{% endif %}
 
-# Databases mapped to the primary instance
+# Databases
 mmi_database = {
-  {% for db in databaseNames %}
-  "{{ db }}" = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-  {% endfor %}
+  {% for db in databaseNames %}"{{ db }}" = "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"{% if not loop.last %},{% endif %}{% endfor %}
 }
 
-# Admin assignments (only per-instance, powered by AAD)
+# AAD admins
 mmi_admin_assignment = {
-  sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001 = {
+  "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
     login_username              = "${{ administratorLogin }}"
-    users                       = [{% for u in adminUsers %}"${{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    users                       = [{% for u in adminUsers %}"{{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}]
     service_principal_names     = []
     group_names                 = []
-    azuread_authentication_only = {{ azureAdAuthOnly | default(false) }}
+    azuread_authentication_only = ${{ azureAdAuthOnly | default(false) }}
   }
 }
 
-# Failover group (only if failover enabled)
+# Failover group (only if enabled)
 {% if enableFailover %}
 mmi_failover_group = {
   "fg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001" = {
@@ -154,9 +88,7 @@ mmi_failover_group = {
 mmi_failover_group = {}
 {% endif %}
 
-# Additional tags can be extended as needed
 mmi_additional_tags = {
-  "environment" = "${{ environment }}"
-  "application" = "${{ appCode }}"
+  environment = "${{ environment }}"
+  application = "${{ appCode }}"
 }
-``
