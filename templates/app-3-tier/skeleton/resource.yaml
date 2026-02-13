@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: sqlmi-${{ appCode | lower }}-${{ environment | lower }}
+  description: Azure SQL Managed Instance for ${{ appCode }} (${{ environment }})
+  tags: [azure, terraform, sql, managed-instance, caf]
+spec:
+  type: database
+  owner: ${{ owner }}
+  system: ${{ system }}

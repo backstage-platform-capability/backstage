@@ -233,6 +233,16 @@ spec:
         defaultBranch: main
         repoVisibility: public
 
+
+    - id: register
+      name: Register in Backstage
+      action: catalog:register
+      # Run only if publish produced outputs
+      if: ${{ steps.publish.output.repoContentsUrl }}
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/resource.yaml'
+
   output:
     links:
       - title: Download Template
