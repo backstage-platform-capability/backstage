@@ -233,18 +233,8 @@ spec:
         defaultBranch: main
         repoVisibility: public
 
-
-    - id: register
-      name: Register in Backstage
-      action: catalog:register
-      input:
-        catalogInfoUrl: https://raw.githubusercontent.com/backstage-platform-capability/backstage/templates/app-3-tier/template.yaml
-        catalogInfoPath: ./resource.yaml
-
   output:
     links:
-      - title: Repository
+      - title: Download Template
         url: ${{ steps.publish.output.remoteUrl }}
-      - title: Backstage entity
-        url: ${{ steps.register.output.entityRef }}
  
