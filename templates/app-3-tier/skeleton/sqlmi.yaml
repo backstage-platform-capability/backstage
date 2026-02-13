@@ -44,3 +44,58 @@ mssql_managed_instances:
     vcores: ${{ vcores }}
     storage_size_in_gb: ${{ storageSizeInGb }}
     {% if useStandardCafVnetNames %}
+    subnet_name: "sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"
+    vnet_name: "vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+    {% else %}
+    subnet_name: "${{ existingSubnetName }}"
+    vnet_name: "${{ existingVnetName }}"
+    {% endif %}
+    vnet_rg_name: {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    administrator_login: "${{ administratorLogin }}"
+    admin_login_username_secret_name: "${{ administratorLogin }}2-username"
+    admin_login_password_secret_name: "${{ administratorLogin }}2-password"
+    secret_expiration_date: {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    collation: null
+    proxy_override: null
+    public_data_endpoint_enabled: false
+    storage_account_type: "LRS"
+    timezone_id: null
+    identity:
+      type: "SystemAssigned"
+    failover_instance: true
+    primary_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+  {% endif %}
+
+# List of databases created on the primary MI
+databases:
+{% for db in databaseNames %}
+  - name: "{{ db }}"
+    managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+{% endfor %}
+
+# AAD admin assignment for the primary MI
+aad_admin:
+  managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+  login_username: "${{ administratorLogin }}"
+  users: [{% for u in adminUsers %}"{{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+  service_principal_names: []
+  group_names: []
+  azuread_authentication_only: ${{ azureAdAuthOnly | default(false) }}
+
+# Failover group (present only if enabled)
+{% if enableFailover %}
+failover_group:
+  name: "fg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+  managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+  failover_managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002"
+  readonly_endpoint_failover_policy_enabled: false
+  failover_policy_mode: "Automatic"
+  failover_grace_minutes: 60
+{% else %}
+failover_group: {}
+{% endif %}
+
+# Additional tags
+tags:
+  environment: "${{ environment }}"
+  application: "${{ appCode }}"
