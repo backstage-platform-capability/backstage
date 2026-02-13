@@ -1,0 +1,250 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: azure-mssql-managedinstance-caf
+  title: Azure SQL Managed Instance (CAF standard)
+  description: >
+    Provisions Azure SQL Managed Instance(s) using the shared Terraform module
+    with Azure CAF naming and minimal user inputs.
+  tags:
+    - azure
+    - terraform
+    - sql
+    - managed-instance
+    - caf
+spec:
+  owner: platform/cloud-team
+  type: infrastructure
+
+  parameters:
+    - title: Workload & Environment
+      description: Basic information to generate CAF-compliant names.
+      required:
+        - appCode
+        - environment
+        - regionShort
+        - azureRegion
+        - owner
+        - system
+      properties:
+        appCode:
+          type: string
+          title: Application code
+          description: Short app or domain code, used in CAF naming (e.g. "app", "rtr", "billing").
+          pattern: '^[a-z0-9-]+$'
+        environment:
+          type: string
+          title: Environment
+          description: Deployment environment.
+          enum: [dev, tst, prd]
+          default: dev
+        regionShort:
+          type: string
+          title: Azure region short name
+          description: >
+            Short CAF-style region code (e.g. "cus" for centralus, "eus2" for eastus2).
+            Used in resource names.
+          pattern: '^[a-z0-9]+$'
+          default: cus
+        azureRegion:
+          type: string
+          title: Azure region (location)
+          description: Azure region name as used by Terraform (e.g. "centralus", "eastus2").
+          default: centralus
+        owner:
+          type: string
+          title: Backstage owner
+          description: Backstage owner group or user (e.g. "group:cloud-platform").
+          default: group:cloud-platform
+        system:
+          type: string
+          title: Backstage system
+          description: The system this resource belongs to.
+          default: system:core-banking
+
+    - title: Managed Instance Topology
+      description: Configure primary and optional failover instances.
+      required:
+        - licenseType
+        - skuName
+        - vcores
+        - storageSizeInGb
+        - administratorLogin
+        - enableFailover
+      properties:
+        licenseType:
+          type: string
+          title: License type
+          description: License type for SQL MI.
+          enum: [BasePrice, PriceIncluded]
+          default: BasePrice
+        skuName:
+          type: string
+          title: SKU name
+          description: >
+            Managed instance SKU (must match Terraform module constraints).
+          enum: [GP_Gen5, GP_Gen4, BC_Gen5, BC_Gen4]
+          default: GP_Gen5
+        vcores:
+          type: integer
+          title: vCores
+          description: Number of vCores for the managed instance.
+          default: 4
+          minimum: 2
+        storageSizeInGb:
+          type: integer
+          title: Storage size (GB)
+          description: Must be a multiple of 32 GB.
+          default: 32
+          multipleOf: 32
+        administratorLogin:
+          type: string
+          title: Administrator login name
+          description: SQL MI admin login name (username only, password is generated).
+          default: azureuser
+        enableFailover:
+          type: boolean
+          title: Enable failover instance
+          description: Create a secondary SQL MI and a failover group.
+          default: true
+
+    - title: Networking
+      description: Network configuration for SQL Managed Instance.
+      properties:
+        useStandardCafVnetNames:
+          type: boolean
+          title: Use CAF-based VNet/Subnet names
+          description: >
+            If true, names are generated as vnet-<regionShort>-<appCode>-<env>-001
+            and sn-<regionShort>-sharedservices-<env>.
+          default: true
+        existingVnetName:
+          type: string
+          title: Existing VNet name (if not using CAF-generated)
+          description: Provide an existing VNet name if you disable CAF VNet naming.
+        existingSubnetName:
+          type: string
+          title: Existing subnet name (if not using CAF-generated)
+          description: Provide an existing subnet name if you disable CAF VNet naming.
+        vnetResourceGroupName:
+          type: string
+          title: VNet resource group name (optional)
+          description: >
+            Resource group containing the VNet. If omitted, the MI resource group
+            will be used.
+
+    - title: Databases & Admin Access
+      description: Databases and AAD admins for the managed instance.
+      required: []
+      properties:
+        databaseNames:
+          type: array
+          title: Database names
+          description: Databases to create on the primary managed instance.
+          items:
+            type: string
+          default:
+            - appdb
+        adminUsers:
+          type: array
+          title: Azure AD user UPNs
+          description: AAD users to assign as SQL MI admins.
+          items:
+            type: string
+          default:
+            - user1@contoso.onmicrosoft.com
+        azureAdAuthOnly:
+          type: boolean
+          title: Azure AD authentication only
+          description: >
+            If true, only Azure AD authentication will be allowed (no SQL auth).
+          default: false
+        secretExpirationDate:
+          type: string
+          title: Secret expiration date (optional)
+          description: >
+            ISO 8601 date for Key Vault secrets (e.g. "2026-12-31T23:59:59Z").
+          default: ""
+
+    - title: Terraform / Repo Metadata
+      description: Information used for catalog registration and pipeline wiring.
+      required: []
+      properties:
+        repoUrl:
+          type: string
+          title: Target repo URL
+          description: >
+            Git repository where the tfvars and resource.yaml will be created
+            (e.g. "github.com/org/app-infra").
+        terraformPath:
+          type: string
+          title: Terraform directory
+          description: >
+            Path (in the target repo) where Terraform configuration for this MI
+            will live (e.g. "infra/sqlmi/dev").
+          default: infra/sqlmi/dev
+        subscriptionId:
+          type: string
+          title: Azure subscription ID (optional)
+          description: Subscription used for this deployment (for documentation/annotations).
+
+  steps:
+    - id: fetch-base
+      name: Fetch skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        targetPath: .
+        values:
+          appCode: ${{ parameters.appCode }}
+          environment: ${{ parameters.environment }}
+          regionShort: ${{ parameters.regionShort }}
+          azureRegion: ${{ parameters.azureRegion }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+
+          licenseType: ${{ parameters.licenseType }}
+          skuName: ${{ parameters.skuName }}
+          vcores: ${{ parameters.vcores }}
+          storageSizeInGb: ${{ parameters.storageSizeInGb }}
+          administratorLogin: ${{ parameters.administratorLogin }}
+          enableFailover: ${{ parameters.enableFailover }}
+
+          useStandardCafVnetNames: ${{ parameters.useStandardCafVnetNames }}
+          existingVnetName: ${{ parameters.existingVnetName }}
+          existingSubnetName: ${{ parameters.existingSubnetName }}
+          vnetResourceGroupName: ${{ parameters.vnetResourceGroupName }}
+
+          databaseNames: ${{ parameters.databaseNames }}
+          adminUsers: ${{ parameters.adminUsers }}
+          azureAdAuthOnly: ${{ parameters.azureAdAuthOnly }}
+          secretExpirationDate: ${{ parameters.secretExpirationDate }}
+
+          repoUrl: ${{ parameters.repoUrl }}
+          terraformPath: ${{ parameters.terraformPath }}
+          subscriptionId: ${{ parameters.subscriptionId }}
+
+    - id: publish
+      name: Publish to SCM
+      action: publish:github
+      if: ${{ parameters.repoUrl }}
+      input:
+        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ parameters.appCode }}
+        description: Azure SQL Managed Instance infra for ${{ parameters.appCode }} (${{ parameters.environment }})
+        defaultBranch: main
+        protectDefaultBranch: true
+
+    - id: register
+      name: Register in Backstage
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: ./resource.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Backstage entity
+        url: ${{ steps.register.output.entityRef }}
+ 

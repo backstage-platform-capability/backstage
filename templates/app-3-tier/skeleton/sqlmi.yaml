@@ -1,0 +1,162 @@
+## NOTE: Values are rendered by Backstage template. Do not edit placeholders manually.
+
+# CAF-style resource group and key vault
+resource_group_name = "rg-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+
+key_vault_name    = "kv-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+key_vault_rg_name = "rg-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+
+# Derive VNet and Subnet names
+{% if useStandardCafVnetNames %}
+# CAF-style network names
+# VNet: vnet-<regionShort>-<appCode>-<env>-001
+# Subnet: sn-<regionShort>-sharedservices-<env>
+mssql_managed_instance = {
+  "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001" = {
+    license_type                     = "{{ licenseType }}"
+    location                         = "{{ azureRegion }}"
+    sku_name                         = "{{ skuName }}"
+    storage_size_in_gb               = {{ storageSizeInGb }}
+    subnet_name                      = "sn-{{ regionShort }}-sharedservices-{{ environment | lower }}"
+    vnet_name                        = "vnet-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    vcores                           = {{ vcores }}
+    failover_instance                = false
+    primary_instance_name            = null
+    administrator_login              = "{{ administratorLogin }}"
+    admin_login_username_secret_name = "{{ administratorLogin }}-username"
+    admin_login_password_secret_name = "{{ administratorLogin }}-password"
+    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    collation                        = null
+    proxy_override                   = null
+    public_data_endpoint_enabled     = false
+    storage_account_type             = "LRS"
+    timezone_id                      = null
+    identity = {
+      type = "SystemAssigned"
+    }
+  }
+
+  {% if enableFailover %}
+  "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-002" = {
+    license_type                     = "{{ licenseType }}"
+    location                         = "{{ azureRegion }}"
+    sku_name                         = "{{ skuName }}"
+    storage_size_in_gb               = {{ storageSizeInGb }}
+    subnet_name                      = "sn-{{ regionShort }}-sharedservices-{{ environment | lower }}"
+    vnet_name                        = "vnet-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    vcores                           = {{ vcores }}
+    failover_instance                = true
+    primary_instance_name            = "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+    administrator_login              = "{{ administratorLogin }}"
+    admin_login_username_secret_name = "{{ administratorLogin }}2-username"
+    admin_login_password_secret_name = "{{ administratorLogin }}2-password"
+    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    collation                        = null
+    proxy_override                   = null
+    public_data_endpoint_enabled     = false
+    storage_account_type             = "LRS"
+    timezone_id                      = null
+    identity = {
+      type = "SystemAssigned"
+    }
+  }
+  {% endif %}
+}
+{% else %}
+# Use explicitly provided networking names
+mssql_managed_instance = {
+  "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001" = {
+    license_type                     = "{{ licenseType }}"
+    location                         = "{{ azureRegion }}"
+    sku_name                         = "{{ skuName }}"
+    storage_size_in_gb               = {{ storageSizeInGb }}
+    subnet_name                      = "{{ existingSubnetName }}"
+    vnet_name                        = "{{ existingVnetName }}"
+    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    vcores                           = {{ vcores }}
+    failover_instance                = false
+    primary_instance_name            = null
+    administrator_login              = "{{ administratorLogin }}"
+    admin_login_username_secret_name = "{{ administratorLogin }}-username"
+    admin_login_password_secret_name = "{{ administratorLogin }}-password"
+    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    collation                        = null
+    proxy_override                   = null
+    public_data_endpoint_enabled     = false
+    storage_account_type             = "LRS"
+    timezone_id                      = null
+    identity = {
+      type = "SystemAssigned"
+    }
+  }
+
+  {% if enableFailover %}
+  "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-002" = {
+    license_type                     = "{{ licenseType }}"
+    location                         = "{{ azureRegion }}"
+    sku_name                         = "{{ skuName }}"
+    storage_size_in_gb               = {{ storageSizeInGb }}
+    subnet_name                      = "{{ existingSubnetName }}"
+    vnet_name                        = "{{ existingVnetName }}"
+    vnet_rg_name                     = {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
+    vcores                           = {{ vcores }}
+    failover_instance                = true
+    primary_instance_name            = "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+    administrator_login              = "{{ administratorLogin }}"
+    admin_login_username_secret_name = "{{ administratorLogin }}2-username"
+    admin_login_password_secret_name = "{{ administratorLogin }}2-password"
+    secret_expiration_date           = {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    collation                        = null
+    proxy_override                   = null
+    public_data_endpoint_enabled     = false
+    storage_account_type             = "LRS"
+    timezone_id                      = null
+    identity = {
+      type = "SystemAssigned"
+    }
+  }
+  {% endif %}
+}
+{% endif %}
+
+# Databases mapped to the primary instance
+mmi_database = {
+  {% for db in databaseNames %}
+  "{{ db }}" = "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+  {% endfor %}
+}
+
+# Admin assignments (only per-instance, powered by AAD)
+mmi_admin_assignment = {
+  sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001 = {
+    login_username              = "{{ administratorLogin }}"
+    users                       = [{% for u in adminUsers %}"{{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    service_principal_names     = []
+    group_names                 = []
+    azuread_authentication_only = {{ azureAdAuthOnly | default(false) }}
+  }
+}
+
+# Failover group (only if failover enabled)
+{% if enableFailover %}
+mmi_failover_group = {
+  "fg-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001" = {
+    managed_instance_name                     = "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
+    failover_managed_instance_name            = "sqlmi-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-002"
+    readonly_endpoint_failover_policy_enabled = false
+    failover_policy_mode                      = "Automatic"
+    failover_grace_minutes                    = 60
+  }
+}
+{% else %}
+mmi_failover_group = {}
+{% endif %}
+
+# Additional tags can be extended as needed
+mmi_additional_tags = {
+  "environment" = "{{ environment }}"
+  "application" = "{{ appCode }}"
+}
+``
