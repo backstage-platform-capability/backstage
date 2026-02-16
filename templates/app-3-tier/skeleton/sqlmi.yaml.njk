@@ -1,30 +1,33 @@
 # NOTE: Values are rendered by Backstage template. Do not edit placeholders manually.
 
-resource_group_name: "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+# CAF-style names for RG & KV (derived from inputs)
+resource_group_name: "rg-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
 
-key_vault_name: "kv-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-key_vault_rg_name: "rg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+key_vault_name: "kv-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
+key_vault_rg_name: "rg-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
 
 mssql_managed_instances:
   # Primary instance
-  - name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-    license_type: "${{ licenseType }}"
-    location: "${{ azureRegion }}"
-    sku_name: "${{ skuName }}"
-    vcores: ${{ vcores }}
-    storage_size_in_gb: ${{ storageSizeInGb }}
-    {% if useStandardCafVnetNames %}
-    subnet_name: "sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"
-    vnet_name: "vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+  - name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
+    license_type: "${{ values.dependencies[0].subscription.license_type }}"
+    location: "${{ values.dependencies[0].subscription.azure_region }}"
+    sku_name: "${{ values.dependencies[0].subscription.sku_name }}"
+    vcores: ${{ values.dependencies[0].subscription.vcores }}
+    storage_size_in_gb: ${{ values.dependencies[0].subscription.storage_size_in_gb }}
+
+    {% if values.dependencies[0].subscription.use_standard_caf_vnet_names %}
+    subnet_name: "sn-${{ values.dependencies[0].subscription.region_short }}-sharedservices-${{ values.dependencies[0].subscription.environment | lower }}"
+    vnet_name: "vnet-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
     {% else %}
-    subnet_name: "${{ existingSubnetName }}"
-    vnet_name: "${{ existingVnetName }}"
+    subnet_name: "${{ values.dependencies[0].subscription.existing_subnet_name }}"
+    vnet_name: "${{ values.dependencies[0].subscription.existing_vnet_name }}"
     {% endif %}
-    vnet_rg_name: {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    administrator_login: "${{ administratorLogin }}"
-    admin_login_username_secret_name: "${{ administratorLogin }}-username"
-    admin_login_password_secret_name: "${{ administratorLogin }}-password"
-    secret_expiration_date: {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    vnet_rg_name: {% if values.dependencies[0].subscription.vnet_resource_group_name %}"{{ values.dependencies[0].subscription.vnet_resource_group_name }}"{% else %}null{% endif %}
+
+    administrator_login: "${{ values.dependencies[0].subscription.administrator_login }}"
+    admin_login_username_secret_name: "${{ values.dependencies[0].subscription.administrator_login }}-username"
+    admin_login_password_secret_name: "${{ values.dependencies[0].subscription.administrator_login }}-password"
+    secret_expiration_date: {% if values.dependencies[0].subscription.secret_expiration_date %}"{{ values.dependencies[0].subscription.secret_expiration_date }}"{% else %}null{% endif %}
     collation: null
     proxy_override: null
     public_data_endpoint_enabled: false
@@ -35,26 +38,28 @@ mssql_managed_instances:
     failover_instance: false
     primary_instance_name: null
 
-  {% if enableFailover %}
+  {% if values.dependencies[0].subscription.enable_failover %}
   # Secondary (failover) instance
-  - name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002"
-    license_type: "${{ licenseType }}"
-    location: "${{ azureRegion }}"
-    sku_name: "${{ skuName }}"
-    vcores: ${{ vcores }}
-    storage_size_in_gb: ${{ storageSizeInGb }}
-    {% if useStandardCafVnetNames %}
-    subnet_name: "sn-${{ regionShort }}-sharedservices-${{ environment | lower }}"
-    vnet_name: "vnet-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+  - name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-002"
+    license_type: "${{ values.dependencies[0].subscription.license_type }}"
+    location: "${{ values.dependencies[0].subscription.azure_region }}"
+    sku_name: "${{ values.dependencies[0].subscription.sku_name }}"
+    vcores: ${{ values.dependencies[0].subscription.vcores }}
+    storage_size_in_gb: ${{ values.dependencies[0].subscription.storage_size_in_gb }}
+
+    {% if values.dependencies[0].subscription.use_standard_caf_vnet_names %}
+    subnet_name: "sn-${{ values.dependencies[0].subscription.region_short }}-sharedservices-${{ values.dependencies[0].subscription.environment | lower }}"
+    vnet_name: "vnet-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
     {% else %}
-    subnet_name: "${{ existingSubnetName }}"
-    vnet_name: "${{ existingVnetName }}"
+    subnet_name: "${{ values.dependencies[0].subscription.existing_subnet_name }}"
+    vnet_name: "${{ values.dependencies[0].subscription.existing_vnet_name }}"
     {% endif %}
-    vnet_rg_name: {% if vnetResourceGroupName %}"{{ vnetResourceGroupName }}"{% else %}null{% endif %}
-    administrator_login: "${{ administratorLogin }}"
-    admin_login_username_secret_name: "${{ administratorLogin }}2-username"
-    admin_login_password_secret_name: "${{ administratorLogin }}2-password"
-    secret_expiration_date: {% if secretExpirationDate %}"{{ secretExpirationDate }}"{% else %}null{% endif %}
+    vnet_rg_name: {% if values.dependencies[0].subscription.vnet_resource_group_name %}"{{ values.dependencies[0].subscription.vnet_resource_group_name }}"{% else %}null{% endif %}
+
+    administrator_login: "${{ values.dependencies[0].subscription.administrator_login }}"
+    admin_login_username_secret_name: "${{ values.dependencies[0].subscription.administrator_login }}2-username"
+    admin_login_password_secret_name: "${{ values.dependencies[0].subscription.administrator_login }}2-password"
+    secret_expiration_date: {% if values.dependencies[0].subscription.secret_expiration_date %}"{{ values.dependencies[0].subscription.secret_expiration_date }}"{% else %}null{% endif %}
     collation: null
     proxy_override: null
     public_data_endpoint_enabled: false
@@ -63,31 +68,35 @@ mssql_managed_instances:
     identity:
       type: "SystemAssigned"
     failover_instance: true
-    primary_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+    primary_instance_name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
   {% endif %}
 
-# List of databases created on the primary MI
+# Databases created on the primary MI
 databases:
-{% for db in databaseNames %}
+{% if values.dependencies[0].subscription.database_names and values.dependencies[0].subscription.database_names | length > 0 %}
+{% for db in values.dependencies[0].subscription.database_names %}
   - name: "{{ db }}"
-    managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
+    managed_instance_name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
 {% endfor %}
+{% else %}
+  []
+{% endif %}
 
 # AAD admin assignment for the primary MI
 aad_admin:
-  managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-  login_username: "${{ administratorLogin }}"
-  users: [{% for u in adminUsers %}"{{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+  managed_instance_name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
+  login_username: "${{ values.dependencies[0].subscription.administrator_login }}"
+  users: [{% if values.dependencies[0].subscription.admin_users %}{% for u in values.dependencies[0].subscription.admin_users %}"{{ u }}"{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}]
   service_principal_names: []
   group_names: []
-  azuread_authentication_only: ${{ azureAdAuthOnly | default(false) }}
+  azuread_authentication_only: ${{ values.dependencies[0].subscription.azuread_auth_only | default(false) }}
 
 # Failover group (present only if enabled)
-{% if enableFailover %}
+{% if values.dependencies[0].subscription.enable_failover %}
 failover_group:
-  name: "fg-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-  managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-001"
-  failover_managed_instance_name: "sqlmi-${{ regionShort }}-${{ appCode | lower }}-${{ environment | lower }}-002"
+  name: "fg-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
+  managed_instance_name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-001"
+  failover_managed_instance_name: "sqlmi-${{ values.dependencies[0].subscription.region_short }}-${{ values.dependencies[0].subscription.app_code | lower }}-${{ values.dependencies[0].subscription.environment | lower }}-002"
   readonly_endpoint_failover_policy_enabled: false
   failover_policy_mode: "Automatic"
   failover_grace_minutes: 60
@@ -97,5 +106,5 @@ failover_group: {}
 
 # Additional tags
 tags:
-  environment: "${{ environment }}"
-  application: "${{ appCode }}"
+  environment: "${{ values.dependencies[0].subscription.environment }}"
+  application: "${{ values.dependencies[0].subscription.app_code }}"
