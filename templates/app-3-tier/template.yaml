@@ -192,13 +192,13 @@ spec:
     - id: fetch-base
       name: Fetch skeleton
       action: fetch:template
-      copyWithoutRender:
-        - "**/*.png"
-        - "**/*.jpg"
-        - "**/*.zip"
       input:
         url: ./skeleton
         templateFileExtension: ".njk"
+        copyWithoutRender:
+          - "**/*.png"
+          - "**/*.jpg"
+          - "**/*.zip"
         values:
           appCode: ${{ parameters.appCode }}
           environment: ${{ parameters.environment }}
