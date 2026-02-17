@@ -458,8 +458,8 @@ spec:
       name: Publish Repository
       action: publish:github
       input:
-        repoUrl: ${{ parameters.repoUrl }}
-        description: Merged infra outputs (Key Vault / VM / SQLMI)
+        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ parameters.appCode }}
+        description: Merged infra outputs (Key Vaulkeyt / VM / SQLMI)
         defaultBranch: main
         repoVisibility: public
 
