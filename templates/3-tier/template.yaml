@@ -26,7 +26,6 @@ spec:
           title: Generate SQL Managed Instance output
           type: boolean
           default: false
-
         publish_to_github:
           title: Publish to GitHub
           type: boolean
@@ -447,7 +446,7 @@ spec:
           subscriptionId: ${{ parameters.subscriptionId }}
 
     - id: publish
-      if: ${{ parameters.publish_to_github }}
+      if: ${{ parameters.publish_to_github && parameters.resource_group_name }}
       name: Publish Repository
       action: publish:github
       input:
@@ -460,9 +459,9 @@ spec:
     links:
       - title: Download Template
         url: ${{ steps.publish.output.remoteUrl }}
-      # - title: Key Vault output folder
-      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
-      # - title: VM output folder
-      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
-      # - title: SQLMI output folder
-      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
+      - title: Key Vault output folder
+        url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
+      - title: VM output folder
+        url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
+      - title: SQLMI output folder
+        url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
