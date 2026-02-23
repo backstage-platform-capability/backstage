@@ -178,12 +178,12 @@ spec:
                                       - Standard_D3
                                       - Standard_E1
                                       - Standard_E2
-                                  resource_group_name:
-                                    title: Resource Group Name
-                                    type: string
-                                  key_vault_name:
-                                    title: Key Vault Name
-                                    type: string
+                                  # resource_group_name:
+                                  #   title: Resource Group Name
+                                  #   type: string
+                                  # key_vault_name:
+                                  #   title: Key Vault Name
+                                  #   type: string
                                   nic_name:
                                     title: NIC Name
                                     type: string
@@ -439,9 +439,3 @@ spec:
     links:
       - title: Download Template
         url: ${{ steps.publish.output.remoteUrl }}
-      # - title: Key Vault output folder
-      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
-      # - title: VM output folder
-      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
-      # - title: SQLMI output folder
-      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
