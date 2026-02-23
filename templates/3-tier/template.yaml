@@ -11,9 +11,8 @@ spec:
   type: infrastructure
 
   parameters:
-    - title: What do you want to generate?
-      required:
-        - repoUrl
+    - title: 3-tier Infrastructure Parameters
+      description: Configure parameters for Key Vault, VM, and SQLMI outputs. Only fill in parameters relevant to the components you want to generate
       properties:
         create_key_vault:
           title: Generate Key Vault output
