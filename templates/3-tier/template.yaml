@@ -30,7 +30,6 @@ spec:
           title: Publish to GitHub
           type: boolean
           default: true
-
       dependencies:
         create_key_vault:
           oneOf:
@@ -65,7 +64,6 @@ spec:
                   title: Enable RBAC Authorization
                   type: boolean
                   default: true
-
                 default_action:
                   title: Default Network Action
                   type: string
@@ -76,7 +74,6 @@ spec:
                   type: string
                   enum: [AzureServices, None]
                   default: AzureServices
-
                 role_definition_name:
                   title: Role Definition
                   type: string
@@ -97,7 +94,6 @@ spec:
               required:
                 - key_vault_name
                 - resource_group_name
-
         create_vms:
           oneOf:
             - properties:
@@ -237,9 +233,6 @@ spec:
                                             type: string
                                             enum: [Windows-2019, Windows-2022]
                                         required: [os_version]
-              required:
-                - Infra
-
         create_sqlmi:
           oneOf:
             - properties:
@@ -248,7 +241,6 @@ spec:
             - properties:
                 create_sqlmi:
                   const: true
-
                 # --- SQLMI Parameters (from your SQLMI CAF template) ---
                 appCode:
                   type: string
@@ -276,7 +268,6 @@ spec:
                   type: string
                   title: Backstage system
                   default: system:core-banking
-
                 licenseType:
                   type: string
                   title: License type
@@ -305,7 +296,6 @@ spec:
                   type: boolean
                   title: Enable failover instance
                   default: true
-
                 useStandardCafVnetNames:
                   type: boolean
                   title: Use CAF-based VNet/Subnet names
@@ -322,7 +312,6 @@ spec:
                   type: string
                   title: VNet resource group name (optional)
                   default: ""
-
                 databaseNames:
                   type: array
                   title: Database names
@@ -343,7 +332,6 @@ spec:
                   type: string
                   title: Secret expiration date (optional)
                   default: ""
-
                 terraformPath:
                   type: string
                   title: Terraform directory
@@ -386,7 +374,6 @@ spec:
           role_definition_name: ${{ parameters.role_definition_name }}
           user_names: ${{ parameters.user_names }}
           group_names: ${{ parameters.group_names }}
-
     - id: fetch-vm
       if: ${{ parameters.create_vms }}
       name: Render VM skeleton
@@ -405,7 +392,6 @@ spec:
           database_type: ${{ parameters.Infra[0].database_type }}
           compute_type: ${{ parameters.Infra[0].compute_type }}
           resource_label: ${{ parameters.Infra[0].resource_label }}
-
     - id: fetch-sqlmi
       if: ${{ parameters.create_sqlmi }}
       name: Render SQLMI skeleton
@@ -424,27 +410,22 @@ spec:
           azureRegion: ${{ parameters.azureRegion }}
           owner: ${{ parameters.owner }}
           system: ${{ parameters.system }}
-
           licenseType: ${{ parameters.licenseType }}
           skuName: ${{ parameters.skuName }}
           vcores: ${{ parameters.vcores }}
           storageSizeInGb: ${{ parameters.storageSizeInGb }}
           administratorLogin: ${{ parameters.administratorLogin }}
           enableFailover: ${{ parameters.enableFailover }}
-
           useStandardCafVnetNames: ${{ parameters.useStandardCafVnetNames }}
           existingVnetName: ${{ parameters.existingVnetName }}
           existingSubnetName: ${{ parameters.existingSubnetName }}
           vnetResourceGroupName: ${{ parameters.vnetResourceGroupName }}
-
           databaseNames: ${{ parameters.databaseNames }}
           adminUsers: ${{ parameters.adminUsers }}
           azureAdAuthOnly: ${{ parameters.azureAdAuthOnly }}
           secretExpirationDate: ${{ parameters.secretExpirationDate }}
-
           terraformPath: ${{ parameters.terraformPath }}
           subscriptionId: ${{ parameters.subscriptionId }}
-
     - id: publish
       if: ${{ parameters.publish_to_github && parameters.resource_group_name }}
       name: Publish Repository
@@ -454,7 +435,6 @@ spec:
         description: Merged infra outputs (Key Vaulkeyt / VM / SQLMI)
         defaultBranch: main
         repoVisibility: public
-
   output:
     links:
       - title: Download Template
