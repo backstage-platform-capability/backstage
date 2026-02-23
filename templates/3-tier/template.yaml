@@ -459,9 +459,9 @@ spec:
     links:
       - title: Download Template
         url: ${{ steps.publish.output.remoteUrl }}
-      - title: Key Vault output folder
-        url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
-      - title: VM output folder
-        url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
-      - title: SQLMI output folder
-        url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
+      # - title: Key Vault output folder
+      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
+      # - title: VM output folder
+      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
+      # - title: SQLMI output folder
+      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
