@@ -28,12 +28,6 @@ spec:
           type: boolean
           default: false
 
-        repoUrl:
-          type: string
-          title: Target repo URL
-          description: >
-            GitHub repository to publish to (e.g. "github.com/backstage-platform-capability/my-infra-repo").
-
         publish_to_github:
           title: Publish to GitHub
           type: boolean
@@ -465,11 +459,11 @@ spec:
 
   output:
     links:
-      - title: Repository
+      - title: Download Template
         url: ${{ steps.publish.output.remoteUrl }}
-      - title: Key Vault output folder
-        url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
-      - title: VM output folder
-        url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
-      - title: SQLMI output folder
-        url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
+      # - title: Key Vault output folder
+      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/keyvault
+      # - title: VM output folder
+      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/vm
+      # - title: SQLMI output folder
+      #   url: ${{ steps.publish.output.remoteUrl }}/tree/main/sqlmi
