@@ -355,16 +355,13 @@ spec:
                 - enableFailover
 
   steps:
-    - id: generateShortuuid
-      name: Generate short UUID
-      action: generate:shortuuid
     - id: fetch
       name: Fetching skeleton templates
       action: fetch:template
       input:
         url: ./skeleton
         values:
-          shortuuid: ${{ steps.generateShortuuid.output.shortuuid }}
+          shortuuid: ${{ uuid() }}
           key_vault_name: ${{ parameters.key_vault_name }}
           resource_group_name: ${{ parameters.resource_group_name }}
           sku_name: ${{ parameters.sku_name }}
@@ -441,10 +438,10 @@ spec:
       name: Prepare for download
       action: publish:github
       input:  
-        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ steps.generateShortuuid.output.shortuuid }}
+        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ steps.fetch.input.values.shortuuid }}
         repoVisibility: public
       
   output:
     links:
       - title: DOWNLOAD TEMPLATE
-        url: ${{ steps.publish.output.remoteUrl }}/archive/refs/heads/main-${{ steps.generateShortuuid.output.shortuuid }}.zip
+        url: ${{ steps.publish.output.remoteUrl }}/archive/refs/heads/main.zip
