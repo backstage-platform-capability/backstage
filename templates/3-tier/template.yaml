@@ -361,7 +361,6 @@ spec:
       input:
         url: ./skeleton
         values:
-          shortuuid: ${{ uuid() }}
           key_vault_name: ${{ parameters.key_vault_name }}
           resource_group_name: ${{ parameters.resource_group_name }}
           sku_name: ${{ parameters.sku_name }}
@@ -438,7 +437,8 @@ spec:
       name: Prepare for download
       action: publish:github
       input:  
-        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ uuid() | slice(0,8) }}
+        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ parameters.resource_group_name }}
+        description: Merged infra outputs (Key Vault / VM / SQLMI)
         repoVisibility: public
         defaultBranch: main
       
