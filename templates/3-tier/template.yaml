@@ -440,6 +440,7 @@ spec:
       input:  
         repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ uuid() | slice(0,8) }}
         repoVisibility: public
+        defaultBranch: main
       
   output:
     links:
