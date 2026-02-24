@@ -438,7 +438,7 @@ spec:
       name: Prepare for download
       action: publish:github
       input:  
-        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ steps.fetch.input.values.shortuuid }}
+        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ uuid() | slice(0,8) }}
         repoVisibility: public
       
   output:
