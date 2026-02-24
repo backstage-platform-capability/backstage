@@ -1,7 +1,7 @@
 # NOTE: Values are rendered by Backstage template. Do not edit placeholders manually.
 
 # CAF-style names for RG & KV (derived from inputs)
-resource_group_name: "rg-{{ values.regionShort }}-{{ values.appCode | lower }}-{{ values.environment | lower }}-001"
+resource_group_name: "rg-{{ regionShort }}-{{ appCode | lower }}-{{ environment | lower }}-001"
 
 key_vault_name: "kv-${{ values.regionShort }}-${{ values.appCode | lower }}-${{ values.environment | lower }}-001"
 key_vault_rg_name: "rg-${{ values.regionShort }}-${{ values.appCode | lower }}-${{ values.environment | lower }}-001"
