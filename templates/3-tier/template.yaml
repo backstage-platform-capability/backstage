@@ -178,9 +178,9 @@ spec:
                                       - Standard_D3
                                       - Standard_E1
                                       - Standard_E2
-                                  # resource_group_name:
-                                  #   title: Resource Group Name
-                                  #   type: string
+                                  resource_group_name:
+                                    title: Resource Group Name
+                                    type: string
                                   # key_vault_name:
                                   #   title: Key Vault Name
                                   #   type: string
@@ -372,67 +372,35 @@ spec:
           role_definition_name: ${{ parameters.role_definition_name }}
           user_names: ${{ parameters.user_names }}
           group_names: ${{ parameters.group_names }}
-    # - id: fetch-vm
-    #   if: ${{ parameters.create_vms }}
-    #   name: Render VM skeleton
-    #   action: fetch:template
-    #   input:
-    #     url: ./skeleton
-    #     templateFileExtension: ".njk"
-    #     copyWithoutRender:
-    #       - "**/*.png"
-    #       - "**/*.jpg"
-    #       - "**/*.zip"
-    #     values:
-    #       dependencies: ${{ parameters.Infra }}
-    #       tier_type: ${{ parameters.Infra[0].tier_type }}
-    #       compliance_type: ${{ parameters.Infra[0].compliance_type }}
-    #       database_type: ${{ parameters.Infra[0].database_type }}
-    #       compute_type: ${{ parameters.Infra[0].compute_type }}
-    #       resource_label: ${{ parameters.Infra[0].resource_label }}
-    # - id: fetch-sqlmi
-    #   if: ${{ parameters.create_sqlmi }}
-    #   name: Render SQLMI skeleton
-    #   action: fetch:template
-    #   input:
-    #     url: ./skeleton
-    #     templateFileExtension: ".njk"
-    #     copyWithoutRender:
-    #       - "**/*.png"
-    #       - "**/*.jpg"
-    #       - "**/*.zip"
-    #     values:
-    #       appCode: ${{ parameters.appCode }}
-    #       environment: ${{ parameters.environment }}
-    #       regionShort: ${{ parameters.regionShort }}
-    #       azureRegion: ${{ parameters.azureRegion }}
-    #       owner: ${{ parameters.owner }}
-    #       system: ${{ parameters.system }}
-    #       licenseType: ${{ parameters.licenseType }}
-    #       skuName: ${{ parameters.skuName }}
-    #       vcores: ${{ parameters.vcores }}
-    #       storageSizeInGb: ${{ parameters.storageSizeInGb }}
-    #       administratorLogin: ${{ parameters.administratorLogin }}
-    #       enableFailover: ${{ parameters.enableFailover }}
-    #       useStandardCafVnetNames: ${{ parameters.useStandardCafVnetNames }}
-    #       existingVnetName: ${{ parameters.existingVnetName }}
-    #       existingSubnetName: ${{ parameters.existingSubnetName }}
-    #       vnetResourceGroupName: ${{ parameters.vnetResourceGroupName }}
-    #       databaseNames: ${{ parameters.databaseNames }}
-    #       adminUsers: ${{ parameters.adminUsers }}
-    #       azureAdAuthOnly: ${{ parameters.azureAdAuthOnly }}
-    #       secretExpirationDate: ${{ parameters.secretExpirationDate }}
-    #       terraformPath: ${{ parameters.terraformPath }}
-    #       subscriptionId: ${{ parameters.subscriptionId }}
-    # - id: publish
-    #   if: ${{ parameters.publish_to_github && parameters.resource_group_name }}
-    #   name: Publish Repository
-    #   action: publish:github
-    #   input:
-    #     repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ parameters.resource_group_name }}
-    #     description: Merged infra outputs (Key Vaulkeyt / VM / SQLMI)
-    #     defaultBranch: main
-    #     repoVisibility: public
+          appCode: ${{ parameters.appCode }}
+          environment: ${{ parameters.environment }}
+          regionShort: ${{ parameters.regionShort }}
+          azureRegion: ${{ parameters.azureRegion }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+          licenseType: ${{ parameters.licenseType }}
+          skuName: ${{ parameters.skuName }}
+          vcores: ${{ parameters.vcores }}
+          storageSizeInGb: ${{ parameters.storageSizeInGb }}
+          administratorLogin: ${{ parameters.administratorLogin }}
+          enableFailover: ${{ parameters.enableFailover }}
+          useStandardCafVnetNames: ${{ parameters.useStandardCafVnetNames }}
+          existingVnetName: ${{ parameters.existingVnetName }}
+          existingSubnetName: ${{ parameters.existingSubnetName }}
+          vnetResourceGroupName: ${{ parameters.vnetResourceGroupName }}
+          databaseNames: ${{ parameters.databaseNames }}
+          adminUsers: ${{ parameters.adminUsers }}
+          azureAdAuthOnly: ${{ parameters.azureAdAuthOnly }}
+          secretExpirationDate: ${{ parameters.secretExpirationDate }}
+          terraformPath: ${{ parameters.terraformPath }}
+          subscriptionId: ${{ parameters.subscriptionId }}
+          dependencies: ${{ parameters.Infra }}
+          tier_type: ${{ parameters.Infra[0].tier_type }}
+          compliance_type: ${{ parameters.Infra[0].compliance_type }}
+          database_type: ${{ parameters.Infra[0].database_type }}
+          compute_type: ${{ parameters.Infra[0].compute_type }}
+          resource_label: ${{ parameters.Infra[0].resource_label }}
+          vm_resource_group_name: ${{ parameters.Infra[0].subscription.resource_group_name }}
     - id: publish
       name: Prepare for download
       action: publish:github
