@@ -445,4 +445,4 @@ spec:
   output:
     links:
       - title: DOWNLOAD TEMPLATE
-        url: ${{ steps.publish.output.repoContentsUrl }}/archive/refs/heads/main.zip
+        url: ${{ steps.publish.output.remoteUrl | replace('.git','') }}/archive/refs/heads/main.zip
