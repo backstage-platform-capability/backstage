@@ -1,6 +1,6 @@
-windows_vms: |
-  {% if values.dependencies[0].subscription.os_type == "windows" %}
-  {% for wvm in values.dependencies[0].subscription.vm_list %}
+windows_vms:
+{% if values.dependencies[0].subscription.os_type == "windows" %}
+{% for wvm in values.dependencies[0].subscription.vm_list %}
   - name: "${{ wvm.vm_name }}"
     resource_group_name: "${{ values.dependencies[0].subscription.resource_group_name }}"
     key_vault_name: "${{ values.key_vault_name }}"
@@ -18,9 +18,9 @@ windows_vms: |
 {% endfor %}
 {% endif %}
 
-linux_vms: |
-  {% if values.dependencies[0].subscription.os_type == "linux" %}
-  {% for lvm in values.dependencies[0].subscription.vm_list %}
+linux_vms:
+{% if values.dependencies[0].subscription.os_type == "linux" %}
+{% for lvm in values.dependencies[0].subscription.vm_list %}
   - name: "${{ lvm.vm_name }}"
     resource_group_name: "${{ values.resource_group_name }}"
     admin_username: "${{ values.dependencies[0].subscription.admin_username }}"
@@ -37,8 +37,8 @@ linux_vms: |
 {% endfor %}
 {% endif %}
 
-network_interfaces: |
-  {% for vm in values.dependencies[0].subscription.vm_list %}
+network_interfaces:
+{% for vm in values.dependencies[0].subscription.vm_list %}
   - name: "${{ values.dependencies[0].subscription.nic_name }}-{{ loop.index }}"
     ip_configurations:
       - name: "ip-config-{{ loop.index }}"
@@ -47,14 +47,14 @@ network_interfaces: |
         vnet_resource_group_name: "${{ values.resource_group_name }}"
 {% endfor %}
 
-attach_managed_disks: |
-  {% for vm in values.dependencies[0].subscription.vm_list %}
+attach_managed_disks:
+{% for vm in values.dependencies[0].subscription.vm_list %}
   - virtual_machine_name: "${{ vm.vm_name }}"
     managed_data_disk_name: "${{ values.dependencies[0].subscription.managed_disk_name }}-{{ loop.index }}"
 {% endfor %}
 
-disk_init: |
-  {% for vm in values.dependencies[0].subscription.vm_list %}
+disk_init:
+{% for vm in values.dependencies[0].subscription.vm_list %}
   - virtual_machine_name: "${{ vm.vm_name }}"
     re_run_disk_init: false
     partitions:
