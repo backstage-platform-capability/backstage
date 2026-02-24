@@ -355,12 +355,16 @@ spec:
                 - enableFailover
 
   steps:
+    - id: generateShortuuid
+      name: Generate short UUID
+      action: generate:shortuuid
     - id: fetch
       name: Fetching skeleton templates
       action: fetch:template
       input:
         url: ./skeleton
         values:
+          shortuuid: ${{ steps.generateShortuuid.output.shortuuid }}
           key_vault_name: ${{ parameters.key_vault_name }}
           resource_group_name: ${{ parameters.resource_group_name }}
           sku_name: ${{ parameters.sku_name }}
@@ -433,11 +437,14 @@ spec:
     #     description: Merged infra outputs (Key Vaulkeyt / VM / SQLMI)
     #     defaultBranch: main
     #     repoVisibility: public
-    - id: download
-      name: Download Master ZIP
-      action: download:filesystem
+    - id: publish
+      name: Prepare for download
+      action: publish:github
+      input:  
+        repoUrl: github.com?owner=backstage-platform-capability&repo=app-3-tier-${{ steps.generateShortuuid.output.shortuuid }}
+        repoVisibility: public
       
   output:
     links:
-      - title: Download Template
-        url: ${{ steps.download.output.path }}
+      - title: DOWNLOAD TEMPLATE
+        url: ${{ steps.publish.output.remoteUrl }}/archive/refs/heads/main-${{ steps.generateShortuuid.output.shortuuid }}.zip
